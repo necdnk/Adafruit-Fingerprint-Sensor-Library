@@ -13,9 +13,15 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution
  ****************************************************/
-
+#if defined(ESP8266)
+  #include <pgmspace.h>
+  #define _delay_ms(ms) delayMicroseconds((ms) * 1000)
+#elif defined (__AVR__)
+    #include <util/delay.h>
+#endif
 #include "Arduino.h"
-#ifdef __AVR__
+
+#if defined (ESP8266) || defined (__AVR__)
   #include <SoftwareSerial.h>
 #endif
 
@@ -71,9 +77,9 @@
 
 class Adafruit_Fingerprint {
  public:
-#ifdef __AVR__
+//#if defined (ESP8266) || defined (__AVR__)
   Adafruit_Fingerprint(SoftwareSerial *);
-#endif
+//#endif
   Adafruit_Fingerprint(HardwareSerial *);
 
   void begin(uint16_t baud);
@@ -101,7 +107,7 @@ class Adafruit_Fingerprint {
     uint8_t recvPacket[20];
 
   Stream *mySerial;
-#ifdef __AVR__
+#if defined (ESP8266) || defined (__AVR__)
   SoftwareSerial *swSerial;
 #endif
   HardwareSerial *hwSerial;

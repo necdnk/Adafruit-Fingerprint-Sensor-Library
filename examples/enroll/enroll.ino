@@ -25,7 +25,13 @@ uint8_t getFingerprintEnroll();
 // pin #2 is IN from sensor (GREEN wire)
 // pin #3 is OUT from arduino  (WHITE wire)
 // On Leonardo/Micro/Yun, use pins 8 & 9. On Mega, just grab a hardware serialport 
-SoftwareSerial mySerial(2, 3);
+
+#if defined (ESP8266) 
+  SoftwareSerial mySerial(4, 0);
+#else
+  SoftwareSerial mySerial(2, 3);
+#endif
+
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 // On Leonardo/Micro or others with hardware serial, use those! #0 is green wire, #1 is white
@@ -34,9 +40,11 @@ Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 void setup()  
 {
+#if !defined (ESP8266) 
   while (!Serial);  // For Yun/Leo/Micro/Zero/...
   delay(500);
-  
+#endif
+
   Serial.begin(9600);
   Serial.println("Adafruit Fingerprint sensor enrollment");
 
@@ -74,7 +82,7 @@ void loop()                     // run over and over again
   Serial.print("Enrolling ID #");
   Serial.println(id);
   
-  while (!  getFingerprintEnroll() );
+  while (!getFingerprintEnroll());
 }
 
 uint8_t getFingerprintEnroll() {
